@@ -31,7 +31,30 @@ const createTask = async(req,res)=>{
     }
 }
 
+const getTaskByID = async(req,res)=>{
+    try{
+         const {id_tasks}=req.params;
+         if(!id_tasks){
+            return res.status(400).json({error: "Faltan el ID de la tarea"});  
+        }
+        const result = await pool.query("Select * from tasks where id_tasks = $1 ",[id_tasks]);
+
+        if(result.rows.length === 0){
+            return res.status(404).json({error:"tasks not found"});
+        }
+
+        res.json(result.rows);
+    }catch(error){
+        console.error("error al seleccionar la tarea",error);
+        res.status(500).json({error:"Error interno del servidor"});
+
+    }
+       
+    
+}
+
 module.exports= {
     getAlltasks,
-    createTask
+    createTask,
+    getTaskByID
 };
