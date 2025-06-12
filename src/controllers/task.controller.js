@@ -68,10 +68,29 @@ const deleteTasksByID = async(req,res)=>{
     }
 }
 
+const updateTaskId = async(req,res)=>{
+    try{
+        const {id_tasks} = req.params
+        const {title_tasks,description_tasks,duedate_tasks,fk_status_id}=req.body;
+        if(!id_tasks){
+            return res.status(400).json({error: "Faltan el ID de la tarea"});  
+        }
+        await pool.query(
+            "UPDATE tasks SET title_tasks= $1, description_tasks=$2,duedate_tasks=$3,fk_status_id=$4 WHERE id_tasks=$5",
+            [title_tasks,description_tasks,duedate_tasks,fk_status_id,id_tasks])
+        res.status(201).json({act:"Tarea Actualizada con exito"});
+
+    }catch(error){
+        console.error("Error al actualizar la tarea",error);
+        res.status(500).json({error:"Error interno del servidor"});
+    }
+}
+
 
 module.exports= {
     getAlltasks,
     createTask,
     getTaskByID,
-    deleteTasksByID
+    deleteTasksByID,
+    updateTaskId
 };
