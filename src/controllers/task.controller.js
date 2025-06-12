@@ -40,7 +40,7 @@ const getTaskByID = async(req,res)=>{
         const result = await pool.query("Select * from tasks where id_tasks = $1 ",[id_tasks]);
 
         if(result.rows.length === 0){
-            return res.status(404).json({error:"tasks not found"});
+            return res.status(404).json({error:"tarea no encontrada"});
         }
 
         res.json(result.rows);
@@ -48,13 +48,30 @@ const getTaskByID = async(req,res)=>{
         console.error("error al seleccionar la tarea",error);
         res.status(500).json({error:"Error interno del servidor"});
 
-    }
-       
-    
+    } 
 }
+
+const deleteTasksByID = async(req,res)=>{
+    try{
+        const{id_tasks}=req.params;
+         if(!id_tasks){
+            return res.status(400).json({error: "Faltan el ID de la tarea"});  
+        }
+        const result = await pool.query("DELETE FROM tasks WHERE id_tasks = $1",[id_tasks]);
+         if(result.rowCount === 0){
+            return res.status(404).json({error:"tarea no encontrada"});
+        }
+        res.status(201).json({act:"Tarea eliminada con exito!!"});
+    }catch(error){
+        console.error("Error al eliminar la tarea",error);
+        res.status(500).json({error:"Error interno del servidor"});
+    }
+}
+
 
 module.exports= {
     getAlltasks,
     createTask,
-    getTaskByID
+    getTaskByID,
+    deleteTasksByID
 };
